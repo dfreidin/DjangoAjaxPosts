@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Ajax Posts</title>
+        <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' integrity='sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm' crossorigin='anonymous'>
+        <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+        <script>
+            $(document).ready(function(){
+                $("#post_form").submit(function(e){
+                    e.preventDefault();
+                    $.ajax({
+                        url: $(this).attr("action"),
+                        method: "post",
+                        data: $(this).serialize(),
+                        success: function(serverResponse){
+                            $("#all_posts").append(serverResponse)
+                        }
+                    })
+                })
+            });
+        </script>
+    </head>
+    <body>
+        <h1>My Posts</h1>
+        <div class="card-columns" id="all_posts">
+            {% for p in request.session.posts %}
+                <div class="card border-secondary">
+                    <p class="card-body card-text">{{p}}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <form id="post_form" action="add_post" method="POST">
+            {% csrf_token %}
+            {{form.as_p}}
+            <input type="submit" value="Post It!">
+        </form>
+    </body>
+</html>
